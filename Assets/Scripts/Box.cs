@@ -107,10 +107,10 @@ public class Box : MonoBehaviour
 
         height = Random.Range(10.0f / ProceduralUtil.getDistanceTowardsCenter(gameObject.transform.position),
             10.0f / ProceduralUtil.getDistanceTowardsCenter(gameObject.transform.position) + heightFraction);
-    }        
+    }
 
     private void initializeBaseShapeType()
-    {   
+    {
         // Random BaseShape
         int baseShape = Random.Range(0, 3);
 
@@ -152,24 +152,26 @@ public class Box : MonoBehaviour
     #endregion
 
     #region GenerateAttachment
-    private void generateBoard() {
+    private void generateBoard()
+    {
         // 1 / 6 chance to generate a board
         //int generateABoard = Random.Range(1, 4);
         //if (generateABoard == 1)
         //{
-            meshList.Add(ProceduralUtil.generateBoardOnRoof(this));
+        meshList.Add(ProceduralUtil.generateBoardOnRoof(this));
         //}
 
         //generateABoard = Random.Range(1, 4);
         //if (generateABoard == 1)
         //{
-            meshList.Add(ProceduralUtil.generateBoardOnSide(this));
+        // meshList.Add(ProceduralUtil.generateBoardOnSide(this));
         //}
     }
     #endregion
 
 
-    void Awake() {
+    void Awake()
+    {
         // initializePivot();
         initializeRandomness();
         initializeBaseShapeType();
@@ -177,13 +179,13 @@ public class Box : MonoBehaviour
 
         // additionTextured = new List<List<Vector3>>();
     }
-    
+
     void Start()
     {
         _render = gameObject.AddComponent<MeshRenderer>();
         _filter = gameObject.AddComponent<MeshFilter>();
         _mesh = _filter.mesh;
-        
+
         // generate Random level of towers
         meshList.Add(ProceduralUtil.extrudeAFace(this, baseVertices, Height, false));
 
@@ -202,12 +204,9 @@ public class Box : MonoBehaviour
             }
             // only generate strip lines if the building is a cube
         }
-
-        int preserveResizeRatio = Random.Range(0, 4);
+        
         float randomHeightLevel = Random.Range(0.1f, 0.3f);
 
-        if (preserveResizeRatio == 0)
-        {
             int numberOfLevel = Random.Range(0, 5);
             float randomRatio = Random.Range(0.0f, 1.0f);
             for (int i = 0; i < numberOfLevel; i++)
@@ -217,31 +216,12 @@ public class Box : MonoBehaviour
 
                 meshList.Add(ProceduralUtil.extrudeAFaceWithLevels(this, lastExtrudedFaceVertices, Height, Length, randomHeightLevel, 1.0f / randomRatio));
             }
-            
-            for (int i = 0; i < lastExtrudedFaceVertices.Length; i++)
-            {
-                lastExtrudedFaceVertices[i] = lastExtrudedFaceVertices[i] + new Vector3(0.0f, randomHeightLevel, 0.0f);
-            }
-        }
-        else {
-            int numberOfLevel = Random.Range(0, 3);
-            float randomRatio = Random.Range(0.0f, 1.0f); for (int i = 0; i < numberOfLevel; i++)
-            {
-                meshList.Add(ProceduralUtil.extrudeAFaceWithLevels(this, lastExtrudedFaceVertices, Width, Length, randomHeightLevel, randomRatio));
-            }
-            
-            for (int i = 0; i < lastExtrudedFaceVertices.Length; i++)
-            {
-                lastExtrudedFaceVertices[i] = lastExtrudedFaceVertices[i] + new Vector3(0.0f, randomHeightLevel, 0.0f);
-            }
-
-        }
 
         // Generate Attachment
         generateBoard();
 
         // Combine Mesh
-        Mesh combinedMesh = ProceduralUtil.combineMeshes(gameObject.transform, meshList);
+        Mesh combinedMesh = ProceduralUtil.combineMeshes(gameObject.transform, meshList, false);
 
         combineMeshTriangles = new List<int>(combinedMesh.triangles);
 
@@ -252,7 +232,8 @@ public class Box : MonoBehaviour
         assignMaterial(combinedMesh);
     }
 
-    private void assignMaterial(Mesh combinedMesh) {
+    private void assignMaterial(Mesh combinedMesh)
+    {
         /*
 
         // if the tower contains board 
